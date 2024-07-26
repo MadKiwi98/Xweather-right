@@ -20,6 +20,17 @@
             max-width: 800px;
             text-align: center;
         }
+        .bar {
+            height: 20px;
+            background-color: #00f;
+            transition: width 1s ease-in-out;
+        }
+        .rain-bar {
+            background-color: #00f;
+        }
+        .wind-bar {
+            background-color: #0f0;
+        }
     </style>
 </head>
 <body>
@@ -50,6 +61,8 @@
                         <p>Weather: ${periods.weather.phrase}</p>
                         <p>Precipitation: ${periods.precip.totalMM} mm</p>
                         <p>Time: ${periods.dateTimeISO}</p>
+                        <div class="bar rain-bar" style="width: ${periods.precip.totalMM * 10}px;">Total Rain: ${periods.precip.totalMM} mm</div>
+                        <div class="bar wind-bar" style="width: ${periods.windSpeed.maxKPH * 10}px;">Max Wind Speed: ${periods.windSpeed.maxKPH} KPH</div>
                     `;
                 }
             })
