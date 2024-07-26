@@ -43,7 +43,12 @@
         const fetchUrl = 'https://data.api.xweather.com/conditions/tatuanui,new%20zealand?format=json&from=5%20years%20ago&plimit=1&filter=minutelyprecip,1min&fields=periods.tempC,periods.dewpointC,periods.humidity,periods.windSpeedKPH,periods.windDir,periods.weather,periods.feelslikeC&client_id=U8feQfLlcEfcXDfsWZs4C&client_secret=HvIaM6HOkFmlJ8ywHPNSudj9txzpyuP7gJh2eDvq';
         
         fetch(fetchUrl)
-            .then(response => response.json())
+            .then(response => {
+                if (!response.ok) {
+                    throw new Error('Network response was not ok ' + response.statusText);
+                }
+                return response.json();
+            })
             .then(json => {
                 if (!json.success) {
                     console.error('Error fetching weather data.');
@@ -82,7 +87,7 @@
             })
             .catch(error => {
                 console.error('Error fetching weather data:', error);
-                document.getElementById('weather-data').innerHTML = '<p>Error fetching weather data.</p>';
+                document.getElementById('weather-data').innerHTML = `<p>Error fetching weather data: ${error.message}</p>`;
             });
     });
     </script>
