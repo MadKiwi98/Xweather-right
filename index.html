@@ -55,11 +55,11 @@
                     console.error('Error fetching weather data:', json.error);
                     document.getElementById('weather-data').innerHTML = '<p>Error fetching weather data: ' + json.error + '</p>';
                 } else {
-                    const data = json.response;
-                    if (data.length === 0) {
-                        throw new Error('No data available for the given period');
+                    const data = json.response[0];
+                    if (!data || !data.loc || !data.periods) {
+                        throw new Error('Invalid data format');
                     }
-                    const periods = data.map(item => item.periods[0]);
+                    const periods = data.periods;
 
                     // Process historical data
                     let tempSum = 0, dewpointSum = 0, humiditySum = 0, windSpeedSum = 0, feelslikeSum = 0;
@@ -78,7 +78,7 @@
 
                     // Display processed data
                     document.getElementById('weather-data').innerHTML = `
-                        <p>Location: ${data[0].loc.lat}, ${data[0].loc.long}</p>
+                        <p>Location: ${data.loc.lat}, ${data.loc.long}</p>
                         <p>Average Temperature over 5 years: ${avgTemp} °C</p>
                         <p>Average Dewpoint over 5 years: ${avgDewpoint} °C</p>
                         <p>Average Humidity over 5 years: ${avgHumidity} %</p>
