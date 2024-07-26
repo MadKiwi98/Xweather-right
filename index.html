@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <title>Weather API</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-    <script defer src="https://cdn.aerisapi.com/sdk/js/latest/aerisweather.min.js"></script>
     <style>
         html, body {
             height: 100%;
@@ -34,20 +33,25 @@
         
         fetch(fetchUrl)
             .then(response => response.json())
-            .then(data => {
-                const periods = data.periods[0];
-                const loc = data.loc;
-                document.getElementById('weather-data').innerHTML = `
-                    <p>Location: ${loc.lat}, ${loc.long}</p>
-                    <p>Temperature: ${periods.temp} °C</p>
-                    <p>Dewpoint: ${periods.dewpoint} °C</p>
-                    <p>Feels Like: ${periods.feelslike} °C</p>
-                    <p>Humidity: ${periods.humidity} %</p>
-                    <p>Wind Speed: ${periods.windSpeed} KPH</p>
-                    <p>Weather: ${periods.weather}</p>
-                    <p>Precipitation: ${periods.precip} mm</p>
-                    <p>Time: ${periods.dateTimeISO}</p>
-                `;
+            .then(json => {
+                if (!json.success) {
+                    console.error('Error fetching weather data.');
+                    document.getElementById('weather-data').innerHTML = '<p>Error fetching weather data.</p>';
+                } else {
+                    const data = json.response[0];
+                    const periods = data.periods[0];
+                    document.getElementById('weather-data').innerHTML = `
+                        <p>Location: ${data.loc.lat}, ${data.loc.long}</p>
+                        <p>Temperature: ${periods.temp} °C</p>
+                        <p>Dewpoint: ${periods.dewpoint} °C</p>
+                        <p>Feels Like: ${periods.feelslike} °C</p>
+                        <p>Humidity: ${periods.humidity} %</p>
+                        <p>Wind Speed: ${periods.windSpeed} KPH</p>
+                        <p>Weather: ${periods.weather}</p>
+                        <p>Precipitation: ${periods.precip} mm</p>
+                        <p>Time: ${periods.dateTimeISO}</p>
+                    `;
+                }
             })
             .catch(error => {
                 console.error('Error fetching weather data:', error);
