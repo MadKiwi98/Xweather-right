@@ -1,28 +1,60 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
-    <meta charset="utf-8" />
+    <meta charset="UTF-8">
     <title>Weather API</title>
-    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
-
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
     <script defer src="https://cdn.aerisapi.com/sdk/js/latest/aerisweather.min.js"></script>
-
+    <style>
+        html, body {
+            height: 100%;
+            margin: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            background-color: #000;
+            color: #fff;
+        }
+        #weather-container {
+            width: 80%;
+            max-width: 800px;
+            text-align: center;
+        }
+    </style>
 </head>
 <body>
-
+    <div id="weather-container">
+        <h1>Weather Information</h1>
+        <div id="weather-data"></div>
+    </div>
     <script>
     window.addEventListener('load', () => {
-
         const aeris = new AerisWeather('U8feQfLlcEfcXDfsWZs4C', 'HvIaM6HOkFmlJ8ywHPNSudj9txzpyuP7gJh2eDvq');
-
-        const request = 
-			.format('json')
-			.fields('loc,periods.temp,periods.dateTimeISO,periods.dewpoint,periods.feelslike,periods.humidity,periods.windSpeed,periods.weather,periods.precip');
-        request.get().then((result) => {
-            console.log(result);
-        });
+        
+        aeris.api().endpoint('observations')
+            .place('seattle,wa')
+            .format('json')
+            .fields('loc,periods.tempC,periods.dateTimeISO,periods.dewpointC,periods.feelslikeC,periods.humidity,periods.windSpeedKPH,periods.weather,periods.precipMM')
+            .get()
+            .then((result) => {
+                const data = result.data[0];
+                document.getElementById('weather-data').innerHTML = `
+                    <p>Location: ${data.loc.lat}, ${data.loc.long}</p>
+                    <p>Temperature: ${data.periods[0].tempC} °C</p>
+                    <p>Dewpoint: ${data.periods[0].dewpointC} °C</p>
+                    <p>Feels Like: ${data.periods[0].feelslikeC} °C</p>
+                    <p>Humidity: ${data.periods[0].humidity} %</p>
+                    <p>Wind Speed: ${data.periods[0].windSpeedKPH} KPH</p>
+                    <p>Weather: ${data.periods[0].weather}</p>
+                    <p>Precipitation: ${data.periods[0].precipMM} mm</p>
+                    <p>Time: ${data.periods[0].dateTimeISO}</p>
+                `;
+            })
+            .catch((error) => {
+                console.error('Error fetching weather data:', error);
+                document.getElementById('weather-data').innerHTML = '<p>Error fetching weather data.</p>';
+            });
     });
     </script>
-
 </body>
 </html>
