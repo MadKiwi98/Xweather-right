@@ -8,6 +8,7 @@
     <style>
         html, body {
             height: 100%;
+            width: 100%;
             margin: 0;
             display: flex;
             justify-content: center;
@@ -29,28 +30,26 @@
     </div>
     <script>
     window.addEventListener('load', () => {
-        const aeris = new AerisWeather('U8feQfLlcEfcXDfsWZs4C', 'HvIaM6HOkFmlJ8ywHPNSudj9txzpyuP7gJh2eDvq');
+        const fetchUrl = 'https://data.api.xweather.com/conditions/summary/tatuanui,new%20zealand?format=json&fields=loc,periods.temp,periods.dateTimeISO,periods.dewpoint,periods.feelslike,periods.humidity,periods.windSpeed,periods.weather,periods.precip&client_id=U8feQfLlcEfcXDfsWZs4C&client_secret=HvIaM6HOkFmlJ8ywHPNSudj9txzpyuP7gJh2eDvq';
         
-        aeris.api().endpoint('observations')
-            .place('seattle,wa')
-            .format('json')
-            .fields('loc,periods.tempC,periods.dateTimeISO,periods.dewpointC,periods.feelslikeC,periods.humidity,periods.windSpeedKPH,periods.weather,periods.precipMM')
-            .get()
-            .then((result) => {
-                const data = result.data[0];
+        fetch(fetchUrl)
+            .then(response => response.json())
+            .then(data => {
+                const periods = data.periods[0];
+                const loc = data.loc;
                 document.getElementById('weather-data').innerHTML = `
-                    <p>Location: ${data.loc.lat}, ${data.loc.long}</p>
-                    <p>Temperature: ${data.periods[0].tempC} °C</p>
-                    <p>Dewpoint: ${data.periods[0].dewpointC} °C</p>
-                    <p>Feels Like: ${data.periods[0].feelslikeC} °C</p>
-                    <p>Humidity: ${data.periods[0].humidity} %</p>
-                    <p>Wind Speed: ${data.periods[0].windSpeedKPH} KPH</p>
-                    <p>Weather: ${data.periods[0].weather}</p>
-                    <p>Precipitation: ${data.periods[0].precipMM} mm</p>
-                    <p>Time: ${data.periods[0].dateTimeISO}</p>
+                    <p>Location: ${loc.lat}, ${loc.long}</p>
+                    <p>Temperature: ${periods.temp} °C</p>
+                    <p>Dewpoint: ${periods.dewpoint} °C</p>
+                    <p>Feels Like: ${periods.feelslike} °C</p>
+                    <p>Humidity: ${periods.humidity} %</p>
+                    <p>Wind Speed: ${periods.windSpeed} KPH</p>
+                    <p>Weather: ${periods.weather}</p>
+                    <p>Precipitation: ${periods.precip} mm</p>
+                    <p>Time: ${periods.dateTimeISO}</p>
                 `;
             })
-            .catch((error) => {
+            .catch(error => {
                 console.error('Error fetching weather data:', error);
                 document.getElementById('weather-data').innerHTML = '<p>Error fetching weather data.</p>';
             });
