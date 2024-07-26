@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Weather API</title>
+    <title>Weather Forecast Based on Historical Data</title>
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
     <style>
         html, body {
@@ -40,7 +40,7 @@
     </div>
     <script>
     window.addEventListener('load', () => {
-        const fetchUrl = 'https://data.api.xweather.com/conditions/summary/tatuanui,new%20zealand?format=json&fields=loc,periods.temp,periods.dateTimeISO,periods.dewpoint,periods.feelslike,periods.humidity,periods.windSpeed,periods.weather,periods.precip&client_id=U8feQfLlcEfcXDfsWZs4C&client_secret=HvIaM6HOkFmlJ8ywHPNSudj9txzpyuP7gJh2eDvq';
+        const fetchUrl = 'https://data.api.xweather.com/conditions/tatuanui,new%20zealand?format=json&from=5%20years%20ago&plimit=1&filter=minutelyprecip,1min&fields=periods.tempC,periods.dewpointC,periods.humidity,periods.windSpeedKPH,periods.windDir,periods.weather,periods.feelslikeC&client_id=U8feQfLlcEfcXDfsWZs4C&client_secret=HvIaM6HOkFmlJ8ywHPNSudj9txzpyuP7gJh2eDvq';
         
         fetch(fetchUrl)
             .then(response => response.json())
@@ -50,19 +50,33 @@
                     document.getElementById('weather-data').innerHTML = '<p>Error fetching weather data.</p>';
                 } else {
                     const data = json.response[0];
-                    const periods = data.periods[0];
+                    const periods = data.periods;
+                    
+                    // Process historical data
+                    let tempSum = 0, dewpointSum = 0, humiditySum = 0, windSpeedSum = 0, feelslikeSum = 0;
+                    periods.forEach(period => {
+                        tempSum += period.tempC;
+                        dewpointSum += period.dewpointC;
+                        humiditySum += period.humidity;
+                        windSpeedSum += period.windSpeedKPH;
+                        feelslikeSum += period.feelslikeC;
+                    });
+                    const avgTemp = (tempSum / periods.length).toFixed(2);
+                    const avgDewpoint = (dewpointSum / periods.length).toFixed(2);
+                    const avgHumidity = (humiditySum / periods.length).toFixed(2);
+                    const avgWindSpeed = (windSpeedSum / periods.length).toFixed(2);
+                    const avgFeelslike = (feelslikeSum / periods.length).toFixed(2);
+
+                    // Display processed data
                     document.getElementById('weather-data').innerHTML = `
                         <p>Location: ${data.loc.lat}, ${data.loc.long}</p>
-                        <p>Temperature (Max/Min/Avg): ${periods.temp.maxC}°C / ${periods.temp.minC}°C / ${periods.temp.avgC}°C</p>
-                        <p>Dewpoint (Max/Min/Avg): ${periods.dewpoint.maxC}°C / ${periods.dewpoint.minC}°C / ${periods.dewpoint.avgC}°C</p>
-                        <p>Feels Like (Max/Min/Avg): ${periods.feelslike.maxC}°C / ${periods.feelslike.minC}°C / ${periods.feelslike.avgC}°C</p>
-                        <p>Humidity (Max/Min/Avg): ${periods.humidity.max}% / ${periods.humidity.min}% / ${periods.humidity.avg}%</p>
-                        <p>Wind Speed (Max/Min/Avg): ${periods.windSpeed.maxKPH} KPH / ${periods.windSpeed.minKPH} KPH / ${periods.windSpeed.avgKPH} KPH</p>
-                        <p>Weather: ${periods.weather.phrase}</p>
-                        <p>Precipitation: ${periods.precip.totalMM} mm</p>
-                        <p>Time: ${periods.dateTimeISO}</p>
-                        <div class="bar rain-bar" style="width: ${periods.precip.totalMM * 10}px;">Total Rain: ${periods.precip.totalMM} mm</div>
-                        <div class="bar wind-bar" style="width: ${periods.windSpeed.maxKPH * 10}px;">Max Wind Speed: ${periods.windSpeed.maxKPH} KPH</div>
+                        <p>Average Temperature over 5 years: ${avgTemp} °C</p>
+                        <p>Average Dewpoint over 5 years: ${avgDewpoint} °C</p>
+                        <p>Average Humidity over 5 years: ${avgHumidity} %</p>
+                        <p>Average Wind Speed over 5 years: ${avgWindSpeed} KPH</p>
+                        <p>Average Feels Like over 5 years: ${avgFeelslike} °C</p>
+                        <div class="bar rain-bar" style="width: ${avgHumidity * 5}px;">Humidity: ${avgHumidity} %</div>
+                        <div class="bar wind-bar" style="width: ${avgWindSpeed * 10}px;">Wind Speed: ${avgWindSpeed} KPH</div>
                     `;
                 }
             })
