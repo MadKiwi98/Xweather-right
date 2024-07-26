@@ -45,14 +45,14 @@
         fetch(fetchUrl)
             .then(response => {
                 if (!response.ok) {
-                    throw new Error('Network response was not ok ' + response.statusText);
+                    throw new Error('Network response was not ok: ' + response.statusText);
                 }
                 return response.json();
             })
             .then(json => {
                 if (!json.success) {
-                    console.error('Error fetching weather data.');
-                    document.getElementById('weather-data').innerHTML = '<p>Error fetching weather data.</p>';
+                    console.error('Error fetching weather data:', json.error);
+                    document.getElementById('weather-data').innerHTML = '<p>Error fetching weather data: ' + json.error + '</p>';
                 } else {
                     const data = json.response[0];
                     const periods = data.periods;
