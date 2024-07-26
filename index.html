@@ -42,13 +42,13 @@
                     const periods = data.periods[0];
                     document.getElementById('weather-data').innerHTML = `
                         <p>Location: ${data.loc.lat}, ${data.loc.long}</p>
-                        <p>Temperature: ${periods.temp} °C</p>
-                        <p>Dewpoint: ${periods.dewpoint} °C</p>
-                        <p>Feels Like: ${periods.feelslike} °C</p>
-                        <p>Humidity: ${periods.humidity} %</p>
-                        <p>Wind Speed: ${periods.windSpeed} KPH</p>
-                        <p>Weather: ${periods.weather}</p>
-                        <p>Precipitation: ${periods.precip} mm</p>
+                        <p>Temperature (Max/Min/Avg): ${periods.temp.maxC}°C / ${periods.temp.minC}°C / ${periods.temp.avgC}°C</p>
+                        <p>Dewpoint (Max/Min/Avg): ${periods.dewpoint.maxC}°C / ${periods.dewpoint.minC}°C / ${periods.dewpoint.avgC}°C</p>
+                        <p>Feels Like (Max/Min/Avg): ${periods.feelslike.maxC}°C / ${periods.feelslike.minC}°C / ${periods.feelslike.avgC}°C</p>
+                        <p>Humidity (Max/Min/Avg): ${periods.humidity.max}% / ${periods.humidity.min}% / ${periods.humidity.avg}%</p>
+                        <p>Wind Speed (Max/Min/Avg): ${periods.windSpeed.maxKPH} KPH / ${periods.windSpeed.minKPH} KPH / ${periods.windSpeed.avgKPH} KPH</p>
+                        <p>Weather: ${periods.weather.phrase}</p>
+                        <p>Precipitation: ${periods.precip.totalMM} mm</p>
                         <p>Time: ${periods.dateTimeISO}</p>
                     `;
                 }
