@@ -50,6 +50,7 @@
                 return response.json();
             })
             .then(json => {
+                console.log('API response:', json);
                 if (!json.success) {
                     console.error('Error fetching weather data:', json.error);
                     document.getElementById('weather-data').innerHTML = '<p>Error fetching weather data: ' + json.error + '</p>';
